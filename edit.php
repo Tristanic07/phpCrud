@@ -47,18 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] == "GET"){
             break;
         }
 
-        $sql = "UPDATE information " . 
-                "SET name = '$name', email = '$email', phone = '$phone', address = '$address' " . 
-                "WHERE id = $id";
-        $result = $connection->query($sql);
-
-        if ($result) {
-            $successMessage = "Record updated successfully.";
-        } else {
-            $errorMessage = "Error updating record: " . $connection->error;
+        try{
+            $stmt = $connection->prepare("UPDATE information SET name = ?, email = ?, phone = ?, address = ? WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, "sssss", $name,$email, $phone, $address, $id);
+            $stmt->execute();
+        }catch(Exception $e) {
+            $errorMessage = $e->getMessage();
+            break;
         }
 
         
+        header("location: index.php");
+        exit;    
  }while(false);
 }
 ?>

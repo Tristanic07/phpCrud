@@ -22,11 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
         }
         //insert information to data base
-        $sql = "INSERT INTO information(name, email, phone, address) VALUES('$name', '$email', '$phone', '$address')";
-        $result = $connection->query($sql);
-
-        if(!$result) {
-            $errorMessage = "Invalid Query" . $connection->error;
+        try {
+            //insert information to data base
+            $stmt = $connection->prepare("INSERT INTO information(name, email, phone, address) VALUES(?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'ssss', $name, $email, $phone, $address);
+            $stmt->execute();
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
             break;
         }
 
